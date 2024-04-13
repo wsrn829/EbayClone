@@ -7,7 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Auction, Bid, Comment, Watchlist
+from .models import User, Auction, Bid, Comment, Watchlist, Category
 
 
 def index(request):
@@ -156,3 +156,20 @@ def add_comment(request, auction_id):
     comment = Comment(content=content, commenter=user, auction=auction)
     comment.save()
     return HttpResponseRedirect(reverse("auction", args=(auction_id,)))
+
+
+@login_required
+def categories(request):
+    categories = Category.objects.all()
+    return render(request, "auctions/categories.html", {
+        "categories": categories
+    })
+
+@login_required
+def category(request, category_id):
+    category = Category.objects.get(pk=category_id)
+    auctions = Auction.objects.filter(category=category, active=True)
+    return render(request, "auctions/category.html", {
+        "category": category,
+        "auctions": auctions
+    })

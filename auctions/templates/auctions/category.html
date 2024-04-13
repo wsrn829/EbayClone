@@ -1,0 +1,22 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h1 class="mb-4">Category</h1>
+
+    {% for category in categories %}
+    <h2><a href="{% url 'category' category_id %}">{{ category.name }}</a></h2>
+
+    { % for auction in auctions % }
+
+    <div class="mb-4">
+        <h2><a href="{% url 'auction' auction.id %}">{{ auction.title }}</a></h2>
+        <p>{{ auction.description }}</p>
+        <p>Current price: {{ auction.current_bid }}</p>
+        {% if auction.image_url %}
+            <img src="{{ auction.image_url }}" alt="{{ auction.title }}">
+        {% endif %}
+    </div>
+
+    {% endfor %}
+
+{% endblock %}
