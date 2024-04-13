@@ -1,7 +1,17 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Active Listings</h2>
-
-    TODO
+    <h1 class="mb-4">Active Listings</h1>
+    {% for auction in auctions %}
+        <div class="mb-4">
+            <h2><a href="{% url 'auction' auction.id %}">{{ auction.title }}</a></h2>
+            <p>{{ auction.description }}</p>
+            <p>Current price: {{ auction.current_bid }}</p>
+            {% if auction.image_url %}
+                <img src="{{ auction.image_url }}" alt="{{ auction.title }}">
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>No active auctions.</p>
+    {% endfor %}
 {% endblock %}

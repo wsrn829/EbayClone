@@ -1,0 +1,36 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h1>{{ auction.title }}</h1>
+    <p>{{ auction.description }}</p>
+    <p>Current price: {{ auction.current_bid }}</p>
+    {% if auction.image_url %}
+        <img src="{{ auction.image_url }}" alt="{{ auction.title }}">
+    {% endif %}
+
+    {% if user.is_authenticated %}
+        <form method="POST" class="mb-4" action="{% url 'place_bid' auction.id %}">
+            {% csrf_token %}
+            <input type="number" name="bid" min="{{ auction.current_bid }}">
+            <input type="submit" value="Place Bid">
+        </form>
+
+        {% if user == auction.created_by %}
+            <form method="POST" class="mb-4" action="{% url 'close_auction' auction.id %}">
+                {% csrf_token %}
+                <input type="submit" value="Close Auction">
+            </form>
+        {% endif %}
+
+        <form method="POST" class="mb-4" action="{% url 'add_comment' auction.id %}">
+            {% csrf_token %}
+            <input type="text" name="comment">
+            <input type="submit" value="Add Comment">
+        </form>
+    {% endif %}
+
+    <h2>Comments</h2>
+    {% for comment in comments %}
+        <p>{{ comment.user.username }}: {{ comment.text }}</p>
+    {% endfor %}
+{% endblock %}
