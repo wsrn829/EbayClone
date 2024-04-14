@@ -1,47 +1,56 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h1>{{ auction.title }}</h1>
-    <p>{{ auction.description }}</p>
-    <p>Current price: {{ auction.current_bid }}</p>
-    {% if auction.image_url %}
-        <img src="{{ auction.image_url }}" alt="{{ auction.title }}">
-    {% endif %}
+    <div class="container">
+        <h1 class="my-4">{{ auction.title }}</h1>
+        <p>{{ auction.description }}</p>
+        <p>Current price: {{ auction.current_bid }}</p>
+        {% if auction.image_url %}
+            <img src="{{ auction.image_url }}" alt="{{ auction.title }}" class="img-fluid">
+        {% endif %}
 
-    {% if user.is_authenticated %}
-        <form method="POST" class="mb-4" action="{% url 'place_bid' auction.id %}">
-            {% csrf_token %}
-            <input type="number" name="amount" min="{{ auction.current_bid }}">
-            <input type="submit" value="Place Bid">
-        </form>
-
-        {% if user == auction.created_by %}
-            <form method="POST" class="mb-4" action="{% url 'close_auction' auction.id %}">
+        {% if user.is_authenticated %}
+            <form method="POST" class="mb-4" action="{% url 'place_bid' auction.id %}">
                 {% csrf_token %}
-                <input type="submit" value="Close Auction">
+                <div class="form-group">
+                    <input type="number" name="amount" min="{{ auction.current_bid }}" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary">Place Bid</button>
             </form>
 
-            <form method="POST" class="mb-4" action="{% url 'add_to_watchlist' auction.id %}">
-                {% csrf_token %}
-                <input type="submit" value="Add to Watchlist">
-            </form>
+            {% if user == auction.created_by %}
+                <form method="POST" class="mb-4" action="{% url 'close_auction' auction.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Close Auction</button>
+                </form>
 
-            <form method="POST" class="mb-4" action="{% url 'remove_from_watchlist' auction.id %}">
+                <form method="POST" class="mb-4" action="{% url 'add_to_watchlist' auction.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Add to Watchlist</button>
+                </form>
+
+                <form method="POST" class="mb-4" action="{% url 'remove_from_watchlist' auction.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-warning">Remove from Watchlist</button>
+                </form>
+            {% endif %}
+
+            <form method="POST" class="mb-4" action="{% url 'add_comment' auction.id %}">
                 {% csrf_token %}
-                <input type="submit" value="Remove from Watchlist">
+                <div class="form-group">
+                    <input type="text" name="content" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary">Add Comment</button>
             </form>
         {% endif %}
 
-        <form method="POST" class="mb-4" action="{% url 'add_comment' auction.id %}">
-            {% csrf_token %}
-            <input type="text" name="content">
-            <input type="submit" value="Add Comment">
-        </form>
-    {% endif %}
-
-    <h2>Comments</h2>
-    {% for comment in comments %}
-        <p>{{ comment.commenter.username }}: {{ comment.content }}</p>
-    {% endfor %}
-
+        <h2 class="my-4">Comments</h2>
+        {% for comment in comments %}
+            <div class="card mb-2">
+                <div class="card-body">
+                    <p class="card-text"><strong>{{ comment.commenter.username }}</strong>: {{ comment.content }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

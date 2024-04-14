@@ -1,17 +1,26 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h1 class="mb-4">Active Listings</h1>
-    {% for auction in auctions %}
-        <div class="mb-4">
-            <h2><a href="{% url 'auction' auction.id %}">{{ auction.title }}</a></h2>
-            <p>{{ auction.description }}</p>
-            <p>Current price: {{ auction.current_bid }}</p>
-            {% if auction.image_url %}
-                <img src="{{ auction.image_url }}" alt="{{ auction.title }}">
-            {% endif %}
-        </div>
-    {% empty %}
-        <p>No active auctions.</p>
-    {% endfor %}
+    <div class="container">
+        <h1 class="mb-4">Active Listings</h1>
+
+        {% if auctions %}
+            <div class="list-group">
+                {% for auction in auctions %}
+                <div class="list-group-item">
+                    <h2><a href="{% url 'auction' auction.id %}" class="list-group-item-heading">{{ auction.title }}</a></h2>
+                    <p class="list-group-item-text">{{ auction.description }}</p>
+                    <p class="list-group-item-text">Current price: {{ auction.current_bid }}</p>
+                    {% if auction.image_url %}
+                        <img src="{{ auction.image_url }}" alt="{{ auction.title }}" class="img-fluid">
+                    {% endif %}
+                </div>
+                {% empty %}
+                <p class="list-group-item">No active auctions.</p>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No active auctions.</p>
+        {% endif %}
+    </div>
 {% endblock %}
