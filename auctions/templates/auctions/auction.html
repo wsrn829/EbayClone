@@ -11,7 +11,7 @@
     {% if user.is_authenticated %}
         <form method="POST" class="mb-4" action="{% url 'place_bid' auction.id %}">
             {% csrf_token %}
-            <input type="number" name="bid" min="{{ auction.current_bid }}">
+            <input type="number" name="amount" min="{{ auction.current_bid }}">
             <input type="submit" value="Place Bid">
         </form>
 
@@ -20,17 +20,28 @@
                 {% csrf_token %}
                 <input type="submit" value="Close Auction">
             </form>
+
+            <form method="POST" class="mb-4" action="{% url 'add_to_watchlist' auction.id %}">
+                {% csrf_token %}
+                <input type="submit" value="Add to Watchlist">
+            </form>
+
+            <form method="POST" class="mb-4" action="{% url 'remove_from_watchlist' auction.id %}">
+                {% csrf_token %}
+                <input type="submit" value="Remove from Watchlist">
+            </form>
         {% endif %}
 
         <form method="POST" class="mb-4" action="{% url 'add_comment' auction.id %}">
             {% csrf_token %}
-            <input type="text" name="comment">
+            <input type="text" name="content">
             <input type="submit" value="Add Comment">
         </form>
     {% endif %}
 
     <h2>Comments</h2>
     {% for comment in comments %}
-        <p>{{ comment.user.username }}: {{ comment.text }}</p>
+        <p>{{ comment.commenter.username }}: {{ comment.content }}</p>
     {% endfor %}
+
 {% endblock %}

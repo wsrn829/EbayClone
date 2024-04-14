@@ -75,7 +75,9 @@ def create_auction(request):
         starting_bid = Decimal(request.POST["starting_bid"])
         image_url = request.POST["image_url"]
         created_by = request.user
-        category = request.POST["category"]
+        category_name = request.POST["category_name"]
+
+        category = Category.objects.get(name=category_name)
 
         auction = Auction(title=title, description=description, starting_bid=starting_bid, current_bid=starting_bid, image_url=image_url, category=category, created_by=created_by)
         auction.save()
@@ -99,11 +101,11 @@ def auction(request, auction_id):
 @login_required
 def watchlist(request):
     user = request.user
-    watchlist = user.watchlist.all()
+    watchlist_items = Watchlist.objects.filter(user=user)
+    watchlist = [item.auction for item in watchlist_items]
     return render(request, "auctions/watchlist.html", {
         "watchlist": watchlist
     })
-
 
 @login_required
 def add_to_watchlist(request, auction_id):
@@ -125,20 +127,22 @@ def remove_from_watchlist(request, auction_id):
 
 @login_required
 def place_bid(request, auction_id):
-    user = request.user
-    auction = Auction.objects.get(pk=auction_id)
-    amount = Decimal(request.POST["amount"])
-    if amount <= auction.current_bid:
-        return render(request, "auctions/auction.html", {
-            "auction": auction,
-            "message": "Bid must be greater than current bid."
-        })
-    bid = Bid(amount=amount, bidder=user, auction=auction)
-    bid.save()
-    auction.current_bid = amount
-    auction.save()
-    return HttpResponseRedirect(reverse("auction", args=(auction_id,)))
-
+    if request.method == "POST":
+        user = request.user
+        auction = Auction.objects.get(pk=auction_id)
+        amount = Decimal(request.POST["amount"])
+        if amount <= auction.current_bid:
+            return render(request, "auctions/auction.html", {
+                "auction": auction,
+                "message": "Bid must be greater than current bid."
+            })
+        bid = Bid(amount=amount, bidder=user, auction=auction)
+        bid.save()
+        auction.current_bid = amount
+        auction.save()
+        return HttpResponseRedirect(reverse("auction", args=(auction_id,)))
+    else:
+        return HttpResponse("Method not allowed.")
 
 @login_required
 def close_auction(request, auction_id):
