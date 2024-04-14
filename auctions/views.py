@@ -89,12 +89,28 @@ def create_auction(request):
 @login_required
 def auction(request, auction_id):
     auction = Auction.objects.get(pk=auction_id)
-    bids = Bid.objects.filter(auction=auction)
+    bids = auction.bids.all()
+    num_bids = auction.bids.count()
     comments = Comment.objects.filter(auction=auction)
+    user = request.user
+    winning_bid = None
+
+    # Check if the auction is closed and if the user is the highest bidder
+    if not auction.active and bids.exists():
+        winning_bid = bids.order_by('-amount').first()
+        if winning_bid.bidder == user:
+            winning_status = "You won this auction!"
+        else:
+            winning_status = "Sorry, you did not win this auction."
+    else:
+        winning_status = None
+
     return render(request, "auctions/auction.html", {
         "auction": auction,
         "bids": bids,
-        "comments": comments
+        "num_bids": num_bids,
+        "comments": comments,
+        "winning_status": winning_status
     })
 
 
@@ -144,11 +160,13 @@ def place_bid(request, auction_id):
     else:
         return HttpResponse("Method not allowed.")
 
+
 @login_required
 def close_auction(request, auction_id):
     auction = Auction.objects.get(pk=auction_id)
-    auction.active = False
-    auction.save()
+    if request.user == auction.created_by:
+        auction.active = False
+        auction.save()
     return HttpResponseRedirect(reverse("index"))
 
 

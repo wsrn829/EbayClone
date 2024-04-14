@@ -5,6 +5,10 @@
         <h1 class="my-4">{{ auction.title }}</h1>
         <p>{{ auction.description }}</p>
         <p>Current price: {{ auction.current_bid }}</p>
+        <p>Number of bids: {{ num_bids }}</p>
+        <p>Category: {{ auction.category }}</p>
+        <p>Created by: {{ auction.created_by }}</p>
+        <p>Created at: {{ auction.created_at }}</p>
         {% if auction.image_url %}
             <img src="{{ auction.image_url }}" alt="{{ auction.title }}" class="img-fluid">
         {% endif %}
@@ -23,6 +27,7 @@
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger">Close Auction</button>
                 </form>
+            {% endif %}
 
                 <form method="POST" class="mb-4" action="{% url 'add_to_watchlist' auction.id %}">
                     {% csrf_token %}
@@ -33,7 +38,6 @@
                     {% csrf_token %}
                     <button type="submit" class="btn btn-warning">Remove from Watchlist</button>
                 </form>
-            {% endif %}
 
             <form method="POST" class="mb-4" action="{% url 'add_comment' auction.id %}">
                 {% csrf_token %}
@@ -42,6 +46,13 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Add Comment</button>
             </form>
+
+            {% if winning_status %}
+            <div class="alert alert-info" role="alert">
+                <p>Congratulations!  You are the highest bidder!</p>
+            </div>
+            {% endif %}
+
         {% endif %}
 
         <h2 class="my-4">Comments</h2>

@@ -3,20 +3,23 @@
 {% block body %}
     <div class="container">
         <h1 class="mb-4">Active Listings</h1>
-
         {% if auctions %}
-            <div class="list-group">
+            <div class="d-flex flex-wrap justify-content-around">
                 {% for auction in auctions %}
-                <div class="list-group-item">
-                    <h2><a href="{% url 'auction' auction.id %}" class="list-group-item-heading">{{ auction.title }}</a></h2>
-                    <p class="list-group-item-text">{{ auction.description }}</p>
-                    <p class="list-group-item-text">Current price: {{ auction.current_bid }}</p>
+                <div class="card m-2" style="width: 18rem;">
                     {% if auction.image_url %}
-                        <img src="{{ auction.image_url }}" alt="{{ auction.title }}" class="img-fluid">
+                    <a href="{% url 'auction' auction.id %}"><img src="{{ auction.image_url }}" class="card-img-top" alt="{{ auction.title }}"></a>
                     {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="{% url 'auction' auction.id %}" class="text-decoration-none text-dark">{{ auction.title }}</a></h5>
+                        <p class="card-text"><strong>Current price:</strong> <span class="text-success">${{ auction.current_bid }}</span></p>
+                        <p class="card-text"><strong>Number of bids:</strong> <span class="text-info">{{ auction.bids.count }}</span></p>
+                        <p class="card-text"><small class="text-muted"><strong>Created by:</strong> {{ auction.created_by }}</small></p>
+                        <p class="card-text"><small class="text-muted"><strong>Created at:</strong> {{ auction.created_at }}</small></p>
+                    </div>
                 </div>
                 {% empty %}
-                <p class="list-group-item">No active auctions.</p>
+                <p>No active auctions.</p>
                 {% endfor %}
             </div>
         {% else %}

@@ -10,9 +10,9 @@
                 <div class="list-group-item">
                     <h2><a href="{% url 'auction' auction.id %}" class="list-group-item-heading">{{ auction.title }}</a></h2>
                     <p class="list-group-item-text">{{ auction.description }}</p>
-                    <p class="list-group-item-text">Current price: {{ auction.current_bid }}</p>
+                    <p class="list-group-item-text">Current price: ${{ auction.current_bid }}</p>
                     {% if auction.image_url %}
-                        <img src="{{ auction.image_url }}" alt="{{ auction.title }}" class="img-fluid">
+                        <img src="{{ auction.image_url }}" alt="{{ auction.title }}" class="img-fluid w-25">
                     {% endif %}
                 </div>
                 {% empty %}

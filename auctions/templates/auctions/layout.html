@@ -6,9 +6,24 @@
         <title>{% block title %}Auctions{% endblock %}</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
+        <style>
+            body {
+                background-color: #f8f9fa;
+            }
+            .container {
+                max-width: 1000px;
+            }
+            .nav-pills .nav-link {
+                border-radius: 0;
+            }
+            .nav-pills .nav-link.active {
+                background-color: #007bff;
+                color: white;
+            }
+        </style>
     </head>
     <body>
-        <div class="container">
+        <div class="container py-5">
             <h1 class="my-4">Auctions</h1>
             <div class="mb-4">
                 {% if user.is_authenticated %}
